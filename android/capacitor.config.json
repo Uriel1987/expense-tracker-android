@@ -1,0 +1,6 @@
+{
+  "appId": "com.uriel.expensestracker.app",
+  "appName": "מעקב הוצאות",
+  "webDir": "www",
+  "bundledWebRuntime": false
+}

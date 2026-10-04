@@ -1,0 +1,14 @@
+# Release signing — never commit (key lives in C:\Users\Riley\keys, passwords in ~/.gradle/gradle.properties)
+*.jks
+*.keystore
+keystore.properties
+key.properties
+
+# Build outputs / deps
+*.apk
+*.aab
+node_modules/
+build/
+.gradle/
+local.properties
+dist/

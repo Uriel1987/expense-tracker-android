@@ -1,0 +1,138 @@
+<!doctype html>
+<html dir="rtl" lang="he">
+<head>
+  <meta charset="utf-8">
+  <title>מעקב הוצאות — הוצאה חדשה</title>
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@500;700&family=Heebo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    .app, .app * { font-family: 'Heebo', system-ui, sans-serif; }
+    .serif { font-family: 'Frank Ruhl Libre', Georgia, serif; }
+    .app button, .app input { font-family: inherit; }
+    .amount-input::placeholder { color: #C9C2AE; }
+  </style>
+</helmet>
+
+<div class="app" style="width:390px;height:844px;position:relative;background:#FAF8F3;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;color:#1E2430;">
+
+  <!-- Header -->
+  <header style="display:flex;align-items:center;gap:14px;padding:22px 20px 8px;flex-shrink:0;">
+    <a href="Main.dc.html" aria-label="ביטול וחזרה" style="width:36px;height:36px;border-radius:50%;background:#FFFFFF;border:1px solid #E9E3D6;display:flex;align-items:center;justify-content:center;flex-shrink:0;text-decoration:none;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M9 5l7 7-7 7" stroke="#5B5648" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
+    <div class="serif" style="font-size:18px;font-weight:700;">הוצאה חדשה</div>
+  </header>
+
+  <div style="padding:18px 20px 120px;flex:1;">
+
+    <!-- Amount -->
+    <div style="text-align:center;padding:22px 0 26px;">
+      <label style="display:block;font-size:12px;color:#9A9280;margin-bottom:10px;">סכום</label>
+      <div style="display:flex;align-items:baseline;justify-content:center;gap:4px;">
+        <span class="serif" style="font-size:30px;font-weight:700;color:#9A9280;">₪</span>
+        <input class="serif amount-input" type="text" inputmode="decimal" value="186" aria-label="סכום ההוצאה בשקלים"
+          style="border:none;background:transparent;outline:none;font-size:52px;font-weight:700;color:#1E2430;width:190px;text-align:center;"/>
+      </div>
+    </div>
+
+    <!-- Scan receipt -->
+    <button style="width:100%;display:flex;align-items:center;justify-content:center;gap:9px;background:#FFFFFF;border:1.5px dashed #D8CFB6;border-radius:14px;padding:13px;font-size:13.5px;font-weight:500;color:#5B5648;cursor:pointer;margin-bottom:22px;">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M4 8a2 2 0 0 1 2-2h1.2l.9-1.6A2 2 0 0 1 9.85 3.5h4.3a2 2 0 0 1 1.75.9L16.8 6H18a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8Z" stroke="#5B5648" stroke-width="1.7" stroke-linejoin="round"/>
+        <circle cx="12" cy="13" r="3.4" stroke="#5B5648" stroke-width="1.7"/>
+      </svg>
+      סרוק קבלה אוטומטית
+    </button>
+
+    <!-- Category -->
+    <div style="margin-bottom:22px;">
+      <div style="font-size:12.5px;font-weight:600;color:#5B5648;margin-bottom:11px;">קטגוריה</div>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;">
+        <sc-for list="{{categories}}" as="c" hint-placeholder-count="6">
+          <button onClick="{{c.pick}}" aria-pressed="{{c.pressed}}" style="{{c.style}}display:flex;align-items:center;gap:9px;padding:12px 13px;border-radius:13px;cursor:pointer;text-align:right;">
+            <span style="width:10px;height:10px;border-radius:50%;background:{{c.color}};flex-shrink:0;"></span>
+            <span style="font-size:13px;font-weight:500;color:#1E2430;">{{c.name}}</span>
+          </button>
+        </sc-for>
+      </div>
+    </div>
+
+    <!-- Description -->
+    <div style="margin-bottom:18px;">
+      <label for="desc-field" style="display:block;font-size:12.5px;font-weight:600;color:#5B5648;margin-bottom:9px;">תיאור</label>
+      <input id="desc-field" type="text" value="שופרסל דיל" placeholder="למשל: קניות בסופר"
+        style="width:100%;background:#FFFFFF;border:1px solid #EEE8D9;border-radius:12px;padding:13px 14px;font-size:13.5px;color:#1E2430;outline:none;"/>
+    </div>
+
+    <!-- Date + recurring -->
+    <div style="display:flex;gap:10px;margin-bottom:24px;">
+      <div style="flex:1;">
+        <label for="date-field" style="display:block;font-size:12.5px;font-weight:600;color:#5B5648;margin-bottom:9px;">תאריך</label>
+        <input id="date-field" type="text" value="20.09.2026"
+          style="width:100%;background:#FFFFFF;border:1px solid #EEE8D9;border-radius:12px;padding:13px 14px;font-size:13.5px;color:#1E2430;outline:none;"/>
+      </div>
+      <label style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;">
+        <span style="display:block;font-size:12.5px;font-weight:600;color:#5B5648;margin-bottom:9px;">הוצאה קבועה</span>
+        <span style="display:flex;align-items:center;gap:9px;background:#FFFFFF;border:1px solid #EEE8D9;border-radius:12px;padding:12px 14px;">
+          <input type="checkbox" style="width:16px;height:16px;accent-color:{{accent}};margin:0;"/>
+          <span style="font-size:12.5px;color:#9A9280;">חוזרת מדי חודש</span>
+        </span>
+      </label>
+    </div>
+
+  </div>
+
+  <!-- Actions -->
+  <div style="position:absolute;bottom:0;right:0;left:0;padding:16px 20px 26px;background:linear-gradient(180deg,rgba(250,248,243,0),#FAF8F3 22%);display:flex;gap:10px;">
+    <a href="Main.dc.html" style="flex:1;text-align:center;padding:15px 0;border-radius:13px;border:1px solid #E9E3D6;background:#FFFFFF;color:#5B5648;font-size:14px;font-weight:600;text-decoration:none;">ביטול</a>
+    <a href="Main.dc.html" style="flex:2;text-align:center;padding:15px 0;border-radius:13px;background:{{accent}};color:#FFFFFF;font-size:14px;font-weight:700;text-decoration:none;box-shadow:0 8px 18px rgba(30,36,48,0.16);">שמירת הוצאה</a>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#C08A2E","options":["#C08A2E","#B4562A","#2F6F5E","#4A5FA8"],"section":"Theme"}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { selected: 0 };
+  }
+  pick(i) {
+    this.setState({ selected: i });
+  }
+  renderVals() {
+    const accent = this.props.accent || '#C08A2E';
+    const raw = [
+      { name: 'מזון', color: '#2F6F5E' },
+      { name: 'אוכל בחוץ', color: '#B4562A' },
+      { name: 'שונות', color: '#8A8578' },
+      { name: 'חשמל', color: '#4A5FA8' },
+      { name: 'גז', color: '#8C5FB0' },
+      { name: 'מים', color: '#2E7DA6' },
+    ];
+    const categories = raw.map((c, i) => {
+      const selected = this.state.selected === i;
+      return {
+        name: c.name,
+        color: c.color,
+        pressed: selected,
+        style: selected
+          ? 'background:#FFFFFF;border:1.5px solid ' + c.color + ';'
+          : 'background:#FFFFFF;border:1.5px solid #EEE8D9;',
+        pick: () => this.pick(i),
+      };
+    });
+    return { accent, categories };
+  }
+}
+</script>
+</body>
+</html>

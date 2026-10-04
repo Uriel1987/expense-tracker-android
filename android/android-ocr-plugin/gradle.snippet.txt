@@ -1,0 +1,31 @@
+Add these once `npx cap add android` has generated the android/ project.
+
+1) In android/settings.gradle (or the top-level build.gradle's repositories,
+   depending on your Gradle version), add the JitPack repo — Tesseract4Android
+   is published there, not on Maven Central:
+
+    dependencyResolutionManagement {
+        repositories {
+            google()
+            mavenCentral()
+            maven { url 'https://jitpack.io' }
+        }
+    }
+
+2) In android/app/build.gradle, add the dependency:
+
+    dependencies {
+        implementation 'cz.adaptech.tesseract4android:tesseract4android:4.9.0'
+    }
+
+3) Copy ReceiptScannerPlugin.java into
+   android/app/src/main/java/com/example/expensetracker/
+
+4) Merge the registerPlugin(...) line from MainActivity.java in this folder
+   into the MainActivity.java that `npx cap add android` generated at
+   android/app/src/main/java/com/example/expensetracker/MainActivity.java
+   (don't just overwrite it — Capacitor's generated file may already have
+   other setup in onCreate).
+
+5) Follow README.md in this same folder to fetch and place the two
+   .traineddata files before your first build.

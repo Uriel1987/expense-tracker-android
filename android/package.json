@@ -1,0 +1,20 @@
+{
+  "name": "expense-tracker-app",
+  "version": "1.0.0",
+  "description": "מעקב הוצאות — Android app shell (Capacitor) wrapping the web app in www/",
+  "private": true,
+  "scripts": {
+    "sync": "npx cap sync android",
+    "open": "npx cap open android",
+    "run": "npx cap run android"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.0.0",
+    "@capacitor/camera": "^6.0.0",
+    "@capacitor/core": "^6.0.0",
+    "@capacitor/preferences": "^6.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^6.0.0"
+  }
+}

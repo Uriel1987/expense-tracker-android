@@ -1,0 +1,303 @@
+<!doctype html>
+<html dir="rtl" lang="he">
+<head>
+  <meta charset="utf-8">
+  <title>מעקב הוצאות — מסך ראשי</title>
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@500;700&family=Heebo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    .app, .app * { font-family: 'Heebo', system-ui, sans-serif; }
+    .serif { font-family: 'Frank Ruhl Libre', Georgia, serif; }
+    .app button { font-family: inherit; }
+    .app input { font-family: inherit; }
+    ::selection { background: rgba(192,138,46,0.25); }
+    .app::-webkit-scrollbar { width: 0; height: 0; }
+  </style>
+</helmet>
+
+<div class="app" style="width:390px;height:844px;position:relative;background:#FAF8F3;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;color:#1E2430;">
+
+  <!-- Header -->
+  <header style="display:flex;align-items:center;justify-content:space-between;padding:22px 20px 14px;flex-shrink:0;">
+    <div style="display:flex;align-items:center;gap:11px;">
+      <div style="width:36px;height:36px;border-radius:11px;background:#1E2430;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle cx="12" cy="12" r="9" stroke="{{accent}}" stroke-width="2.4"/>
+          <path d="M12 12 L12 4.2" stroke="{{accent}}" stroke-width="2.4" stroke-linecap="round"/>
+          <path d="M12 12 L17 15" stroke="{{accent}}" stroke-width="2.4" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div>
+        <div class="serif" style="font-size:19px;font-weight:700;line-height:1.15;">מעקב הוצאות</div>
+        <div style="font-size:12px;color:#9A9280;margin-top:2px;letter-spacing:0.01em;">ספטמבר 2026</div>
+      </div>
+    </div>
+    <button aria-label="הגדרות" style="width:38px;height:38px;border-radius:50%;border:1px solid #E9E3D6;background:#FFFFFF;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <circle cx="12" cy="12" r="3" stroke="#5B5648" stroke-width="1.8"/>
+        <path d="M12 2.5v3M12 18.5v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2.5 12h3M18.5 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1" stroke="#5B5648" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+    </button>
+  </header>
+
+  <!-- Tabs -->
+  <div style="margin:0 20px 20px;display:flex;background:#F0EAD9;border-radius:13px;padding:4px;gap:4px;flex-shrink:0;">
+    <button onClick="{{goMonth}}" style="{{tabStyleMonth}}flex:1;padding:10px 0;border:none;border-radius:10px;font-size:13.5px;font-weight:600;cursor:pointer;">חודש נוכחי</button>
+    <button onClick="{{goCompare}}" style="{{tabStyleCompare}}flex:1;padding:10px 0;border:none;border-radius:10px;font-size:13.5px;font-weight:600;cursor:pointer;">השוואה בין חודשים</button>
+  </div>
+
+  <!-- MONTH VIEW -->
+  <sc-if value="{{isMonth}}" hint-placeholder-val="{{true}}">
+  <div style="padding:0 20px 100px;">
+
+    <!-- Summary card -->
+    <div style="background:#1E2430;border-radius:20px;padding:22px 22px 20px;color:#FAF8F3;margin-bottom:18px;">
+      <div style="font-size:12.5px;color:#A7ADBB;margin-bottom:6px;">סה״כ הוצאות החודש</div>
+      <div class="serif" style="font-size:34px;font-weight:700;line-height:1;margin-bottom:16px;">{{totalSpentLabel}}</div>
+      <div style="height:6px;background:rgba(255,255,255,0.14);border-radius:4px;overflow:hidden;margin-bottom:9px;">
+        <div style="height:100%;width:{{budgetPct}};background:{{accent}};border-radius:4px;"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:#C8CCD6;">
+        <span>מתקציב של {{totalBudgetLabel}}</span>
+        <span>{{remainingLabel}}</span>
+      </div>
+    </div>
+
+    <!-- Donut chart -->
+    <div style="background:#FFFFFF;border:1px solid #EEE8D9;border-radius:20px;padding:20px;margin-bottom:18px;">
+      <div style="font-size:13.5px;font-weight:600;color:#5B5648;margin-bottom:16px;">פילוח לפי קטגוריה</div>
+      <div style="display:flex;align-items:center;gap:22px;">
+        <svg width="132" height="132" viewBox="0 0 176 176" style="flex-shrink:0;transform:rotate(-90deg);" aria-hidden="true">
+          <circle cx="88" cy="88" r="70" fill="none" stroke="#F2EDE0" stroke-width="20"/>
+          <sc-for list="{{donutSegs}}" as="seg" hint-placeholder-count="6">
+            <circle cx="88" cy="88" r="70" fill="none" stroke="{{seg.color}}" stroke-width="20"
+              stroke-dasharray="{{seg.dasharray}}" stroke-dashoffset="{{seg.dashoffset}}" stroke-linecap="butt"/>
+          </sc-for>
+        </svg>
+        <div style="flex:1;display:flex;flex-direction:column;gap:9px;">
+          <sc-for list="{{legend}}" as="row" hint-placeholder-count="6">
+            <div style="display:flex;align-items:center;gap:8px;font-size:12.5px;">
+              <span style="width:9px;height:9px;border-radius:50%;background:{{row.color}};flex-shrink:0;"></span>
+              <span style="flex:1;color:#3C4150;">{{row.name}}</span>
+              <span style="color:#9A9280;font-size:11.5px;">{{row.pct}}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+
+    <!-- Budgets -->
+    <div style="background:#FFFFFF;border:1px solid #EEE8D9;border-radius:20px;padding:20px;margin-bottom:18px;">
+      <div style="font-size:13.5px;font-weight:600;color:#5B5648;margin-bottom:14px;">תקציב לפי קטגוריה</div>
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <sc-for list="{{budgets}}" as="b" hint-placeholder-count="6">
+          <div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;">
+              <div style="display:flex;align-items:center;gap:7px;">
+                <span style="width:8px;height:8px;border-radius:50%;background:{{b.color}};"></span>
+                <span style="font-size:13px;font-weight:500;color:#1E2430;">{{b.name}}</span>
+              </div>
+              <div style="font-size:11.5px;color:#9A9280;">{{b.spentLabel}} <span>{{b.budgetLabel}}</span></div>
+            </div>
+            <div style="height:5px;background:#F2EDE0;border-radius:3px;overflow:hidden;">
+              <div style="height:100%;width:{{b.width}};background:{{b.barColor}};border-radius:3px;"></div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <!-- Transactions -->
+    <div style="background:#FFFFFF;border:1px solid #EEE8D9;border-radius:20px;padding:20px;">
+      <div style="font-size:13.5px;font-weight:600;color:#5B5648;margin-bottom:12px;">תנועות אחרונות</div>
+      <label style="display:flex;align-items:center;gap:8px;background:#F7F4EC;border-radius:11px;padding:9px 12px;margin-bottom:14px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true" style="flex-shrink:0;">
+          <circle cx="11" cy="11" r="7" stroke="#9A9280" stroke-width="2"/>
+          <path d="M20 20l-4.3-4.3" stroke="#9A9280" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <span style="border:0;padding:0;margin:0;width:1px;height:1px;overflow:hidden;position:absolute;clip:rect(0,0,0,0);">חיפוש עסקאות</span>
+        <input type="text" placeholder="חיפוש עסקאות" style="border:none;background:transparent;outline:none;font-size:13px;color:#1E2430;width:100%;"/>
+      </label>
+      <div style="display:flex;flex-direction:column;">
+        <sc-for list="{{transactions}}" as="t" hint-placeholder-count="5">
+          <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid #F2EDE0;">
+            <span style="width:34px;height:34px;border-radius:50%;background:{{t.color}};flex-shrink:0;opacity:0.85;"></span>
+            <div style="flex:1;min-width:0;">
+              <div style="font-size:13.5px;font-weight:500;color:#1E2430;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{t.desc}}</div>
+              <div style="font-size:11.5px;color:#9A9280;margin-top:1px;">{{t.cat}} · {{t.date}}</div>
+            </div>
+            <div class="serif" style="font-size:14.5px;font-weight:700;color:#1E2430;flex-shrink:0;">{{t.amount}}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+  </div>
+  </sc-if>
+
+  <!-- COMPARE VIEW -->
+  <sc-if value="{{isCompare}}" hint-placeholder-val="{{false}}">
+  <div style="padding:0 20px 100px;">
+    <div style="background:#FFFFFF;border:1px solid #EEE8D9;border-radius:20px;padding:22px 20px;margin-bottom:18px;">
+      <div style="font-size:13.5px;font-weight:600;color:#5B5648;margin-bottom:4px;">הוצאות לפי חודש</div>
+      <div style="font-size:11.5px;color:#9A9280;margin-bottom:22px;">6 חודשים אחרונים</div>
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;height:150px;gap:10px;padding:0 2px;">
+        <sc-for list="{{monthBars}}" as="m" hint-placeholder-count="6">
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:8px;">
+            <div style="width:100%;max-width:34px;height:{{m.height}};background:{{m.barColor}};border-radius:7px 7px 3px 3px;"></div>
+            <span style="font-size:11px;color:{{m.labelColor}};font-weight:{{m.labelWeight}};">{{m.label}}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="background:#1E2430;border-radius:20px;padding:20px 22px;color:#FAF8F3;margin-bottom:18px;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M4 15 L10 9 L14 13 L20 6" stroke="#7FBF9E" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M14 6h6v6" stroke="#7FBF9E" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div class="serif" style="font-size:16px;font-weight:700;">11% פחות מאשר באוגוסט</div>
+      </div>
+      <div style="font-size:12.5px;color:#B8BEC9;line-height:1.6;">ירידה עיקרית בקטגוריית חשמל ואוכל בחוץ. המשיכו כך כדי לעמוד ביעד הרבעוני.</div>
+    </div>
+
+    <div style="background:#FFFFFF;border:1px solid #EEE8D9;border-radius:20px;padding:20px;">
+      <div style="font-size:13.5px;font-weight:600;color:#5B5648;margin-bottom:14px;">ממוצע חודשי</div>
+      <div style="display:flex;justify-content:space-between;align-items:baseline;">
+        <span class="serif" style="font-size:26px;font-weight:700;color:#1E2430;">₪4,832</span>
+        <span style="font-size:12px;color:#9A9280;">לחודש, 6 חודשים אחרונים</span>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- FAB -->
+  <a href="AddExpense.dc.html" aria-label="הוספת הוצאה חדשה" style="position:absolute;bottom:26px;left:22px;width:58px;height:58px;border-radius:50%;background:{{accent}};display:flex;align-items:center;justify-content:center;box-shadow:0 10px 24px rgba(30,36,48,0.28);text-decoration:none;">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M12 5v14M5 12h14" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round"/>
+    </svg>
+  </a>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#C08A2E","options":["#C08A2E","#B4562A","#2F6F5E","#4A5FA8"],"section":"Theme"},"initialTab":{"editor":"enum","default":"month","options":["month","compare"],"section":"Theme"}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { tab: this.props.initialTab || 'month' };
+  }
+  setTab(t) {
+    this.setState({ tab: t });
+  }
+  renderVals() {
+    const accent = this.props.accent || '#C08A2E';
+    const activeBg = '#FFFFFF';
+    const activeShadow = '0 1px 3px rgba(30,36,48,0.14)';
+
+    const categories = [
+      { name: 'מזון', color: '#2F6F5E', spent: 2040, budget: 2200 },
+      { name: 'אוכל בחוץ / טייק אווי', color: '#B4562A', spent: 1180, budget: 1400 },
+      { name: 'שונות', color: '#8A8578', spent: 860, budget: 800 },
+      { name: 'חשמל', color: '#4A5FA8', spent: 610, budget: 700 },
+      { name: 'גז', color: '#8C5FB0', spent: 310, budget: 350 },
+      { name: 'מים', color: '#2E7DA6', spent: 240, budget: 300 },
+    ];
+
+    const fmt = (n) => '₪' + n.toLocaleString('he-IL');
+
+    const totalSpent = categories.reduce((s, c) => s + c.spent, 0);
+    const totalBudget = categories.reduce((s, c) => s + c.budget, 0);
+    const budgetPctNum = Math.min(100, Math.round((totalSpent / totalBudget) * 100));
+
+    const circumference = 2 * Math.PI * 70;
+    let cum = 0;
+    const donutSegs = categories.map((c) => {
+      const pct = c.spent / totalSpent;
+      const len = pct * circumference;
+      const seg = {
+        color: c.color,
+        dasharray: len.toFixed(1) + ' ' + (circumference - len).toFixed(1),
+        dashoffset: (-cum).toFixed(1),
+      };
+      cum += len;
+      return seg;
+    });
+
+    const legend = categories.map((c) => ({
+      name: c.name,
+      color: c.color,
+      pct: Math.round((c.spent / totalSpent) * 100) + '%',
+    }));
+
+    const budgets = categories.map((c) => {
+      const pct = Math.min(100, Math.round((c.spent / c.budget) * 100));
+      const over = c.spent > c.budget;
+      return {
+        name: c.name,
+        color: c.color,
+        spentLabel: fmt(c.spent),
+        budgetLabel: 'מתוך ' + fmt(c.budget),
+        width: pct + '%',
+        barColor: over ? '#B0402E' : c.color,
+      };
+    });
+
+    const transactions = [
+      { desc: 'שופרסל דיל', cat: 'מזון', color: '#2F6F5E', amount: fmt(186), date: '20 בספט׳' },
+      { desc: 'וולט — קפה', cat: 'אוכל בחוץ', color: '#B4562A', amount: fmt(34), date: '19 בספט׳' },
+      { desc: 'חברת חשמל', cat: 'חשמל', color: '#4A5FA8', amount: fmt(610), date: '15 בספט׳' },
+      { desc: 'פרטנר — סלולר', cat: 'שונות', color: '#8A8578', amount: fmt(89), date: '12 בספט׳' },
+      { desc: 'פז גז', cat: 'גז', color: '#8C5FB0', amount: fmt(310), date: '8 בספט׳' },
+    ];
+
+    const months = [
+      { label: 'אפר', amount: 4200 },
+      { label: 'מאי', amount: 4850 },
+      { label: 'יונ', amount: 5100 },
+      { label: 'יול', amount: 4700 },
+      { label: 'אוג', amount: 5900 },
+      { label: 'ספט', amount: totalSpent },
+    ];
+    const maxMonth = Math.max.apply(null, months.map((m) => m.amount));
+    const monthBars = months.map((m, i) => {
+      const isCurrent = i === months.length - 1;
+      return {
+        label: m.label,
+        height: Math.round((m.amount / maxMonth) * 118) + 'px',
+        barColor: isCurrent ? accent : '#E4DCC8',
+        labelColor: isCurrent ? '#1E2430' : '#9A9280',
+        labelWeight: isCurrent ? '700' : '400',
+      };
+    });
+
+    return {
+      accent,
+      isMonth: this.state.tab === 'month',
+      isCompare: this.state.tab === 'compare',
+      goMonth: () => this.setTab('month'),
+      goCompare: () => this.setTab('compare'),
+      tabStyleMonth: 'background:' + (this.state.tab === 'month' ? activeBg : 'transparent') + ';color:' + (this.state.tab === 'month' ? '#1E2430' : '#9A9280') + ';box-shadow:' + (this.state.tab === 'month' ? activeShadow : 'none') + ';',
+      tabStyleCompare: 'background:' + (this.state.tab === 'compare' ? activeBg : 'transparent') + ';color:' + (this.state.tab === 'compare' ? '#1E2430' : '#9A9280') + ';box-shadow:' + (this.state.tab === 'compare' ? activeShadow : 'none') + ';',
+      totalSpentLabel: fmt(totalSpent),
+      totalBudgetLabel: fmt(totalBudget),
+      remainingLabel: fmt(totalBudget - totalSpent) + ' נותרו',
+      budgetPct: budgetPctNum + '%',
+      donutSegs,
+      legend,
+      budgets,
+      transactions,
+      monthBars,
+    };
+  }
+}
+</script>
+</body>
+</html>
