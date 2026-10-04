@@ -3,7 +3,9 @@
 #         .\release.ps1 -Notes "Fixed the budget chart"
 # Version: versionCode = git commit count, versionName/tag = 1.0.<count>, so every new commit bumps it.
 param([string]$Notes = "")
-$ErrorActionPreference = "Stop"
+# Not "Stop": git/gradle write normal progress to stderr, which Windows PowerShell would treat as fatal.
+# Failures are caught via $LASTEXITCODE checks instead.
+$ErrorActionPreference = "Continue"
 Set-Location $PSScriptRoot
 
 if (git status --porcelain) { throw "Uncommitted changes. Commit them first so the release matches the repo." }
@@ -29,6 +31,7 @@ $apk = "android\android\app\build\outputs\apk\release\expense-tracker-$tag.apk"
 Copy-Item $built $apk -Force
 
 git push origin HEAD
+if ($LASTEXITCODE) { throw "git push failed" }
 if (-not $Notes) { $Notes = "Release $version" }
 gh release create $tag $apk --title $tag --notes $Notes --target (git rev-parse HEAD)
 if ($LASTEXITCODE) { throw "gh release create failed" }
